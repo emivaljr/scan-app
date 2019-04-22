@@ -1,0 +1,31 @@
+syntax = "proto3"; //Specify proto3 version.
+
+package grpc; //Optional: unique package name.
+
+/* Scanner represents the services that will be called by the client
+ * and also a way of the server to call the client asynchronously */
+service Scanner { //Service class to be used by the clients
+    rpc register(ScannerNode) returns (ScannerNode){} \\ Register the ScannerNode with the Server
+    rpc listenForScan(stream ScanResponse) returns (stream ScanRequest){} \\ Waits for calls to scan
+}
+/* Represents one physical scanner device instance */
+message ScannerDevice{
+   string id = 1;
+   string name = 2;
+}
+/* Represents the machine where the scanner is connected to. One node can contain more the one ScannerDevice */
+message ScannerNode{
+   string id = 1;
+   repeated ScannerDevice scanners = 2;
+}
+/*Request from the Server to the Client to scan a document*/
+message ScanRequest{
+    string id = 1;
+    ScannerDevice scanner = 2;
+}
+/*The response from the client to the server about the result of the scan */
+message ScanResponse{
+    string id = 1;
+    ScannerDevice scanner = 2;
+    string status = 3;
+}
